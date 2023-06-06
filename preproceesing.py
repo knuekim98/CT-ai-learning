@@ -1,26 +1,33 @@
+import tensorflow as tf
+from tensorflow import keras
 import pydicom
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-import pickle
+import os
+from pydicom.pixel_data_handlers.util import apply_modality_lut, apply_voi_lut
 
-fn = './RIDER Lung CT/LD/RIDER-1225316081/01-30-2007-NA-NA-56138/101.000000-NA-90295/1-145.dcm'
-dcm = pydicom.dcmread(fn)
-
+fn = './RIDER Lung CT/train-data/9012-2/1-111.dcm'
+dcm = pydicom.read_file(fn)
 img = o = dcm.pixel_array
-min_img = np.min(img)
-max_img = np.max(img)
 
-img = img - min_img
-img = img / (max_img-min_img)
+slope = int(dcm.RescaleSlope)
+b = int(dcm.RescaleIntercept)
+img = img * slope + b
+
+wc = -1400
+ww = 1600
+dcm.WindowCenter = wc
+dcm.WindowWidth = ww
+img = apply_modality_lut(img, dcm)
+img = apply_voi_lut(img, dcm)
+
+img_min = np.min(img)
+img_max = np.max(img)
+img = img - img_min
+img = img / (img_max-img_min)
 img *= 2**8-1
 img = img.astype(np.uint8)
-
-img = np.expand_dims(img, axis=-1)
-img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-
-with open('./RIDER Lung CT/LDP/1.p', 'wb') as f:
-    pickle.dump(img, f)
 
 fig = plt.figure()
 
