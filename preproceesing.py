@@ -3,6 +3,7 @@ import pydicom
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import cv2
 from pydicom.pixel_data_handlers.util import apply_modality_lut, apply_voi_lut
 WC = -1400
 WW = 1600
@@ -37,6 +38,7 @@ def preprocessing(fn):
     img = img / (img_max-img_min)
     img *= 2**8-1
     img = img.astype(np.uint8)
+    img = cv2.resize(img, dsize=(224, 224), interpolation=cv2.INTER_CUBIC)
     return img
 
 

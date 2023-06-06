@@ -2,7 +2,7 @@ import tensorflow as tf
 from check_data import data_size
 N_TRAIN, N_VAL = data_size()
 N_BATCH = 40
-N_EPOCHS = 40
+N_EPOCHS = 20
 N_VAL_BATCH = 23
 
 
@@ -14,7 +14,7 @@ def _parse_function(tfrecord_serialized):
     parsed_features = tf.io.parse_single_example(tfrecord_serialized, features)
     
     image = tf.io.decode_raw(parsed_features['image'], tf.uint8)    
-    image = tf.reshape(image, [512, 512])
+    image = tf.reshape(image, [224, 224])
     image = tf.cast(image, tf.float32)/255.
     image = tf.repeat(image[..., tf.newaxis], 3, -1)
     
