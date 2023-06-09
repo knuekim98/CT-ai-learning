@@ -3,7 +3,8 @@ from tensorflow import keras
 from keras.applications import MobileNetV3Large
 from keras.layers import Conv2D, ReLU, MaxPooling2D, Dense, BatchNormalization, GlobalAveragePooling2D, Concatenate
 from check_data import data_size
-from get_data import get_data, N_EPOCHS, N_BATCH
+from get_data import get_data
+from const import N_EPOCHS, N_BATCH, N_VAL_BATCH
 mobilenet = MobileNetV3Large(include_top=False, input_shape=(224, 224, 3))
 
 

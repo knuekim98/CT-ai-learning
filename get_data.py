@@ -1,9 +1,7 @@
 import tensorflow as tf
 from check_data import data_size
+from const import N_BATCH, N_VAL_BATCH
 N_TRAIN, N_VAL = data_size()
-N_BATCH = 40
-N_EPOCHS = 20
-N_VAL_BATCH = 23
 
 
 def _parse_function(tfrecord_serialized):
