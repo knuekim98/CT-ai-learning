@@ -21,7 +21,7 @@ def _float_feature(value):
 
 def preprocessing(fn):
     dcm = pydicom.read_file(fn)
-    img = o = dcm.pixel_array
+    img = dcm.pixel_array
 
     slope = int(dcm.RescaleSlope)
     b = int(dcm.RescaleIntercept)
@@ -46,8 +46,6 @@ def create_tfrecord(mode, writer):
     with open(f'./RIDER Lung CT/{mode}/ans.txt', 'r') as f:
         ans = eval(f.read())
     for dir_name in os.listdir(f'./RIDER Lung CT/{mode}/')[:-1]:
-        # 임시
-        if ans.get(dir_name) == None: continue
         for file_name in os.listdir(f'./RIDER Lung CT/{mode}/{dir_name}/'):
             file_number = int(file_name[2:5])
             if ans[dir_name].get(file_number) == None: continue
@@ -62,27 +60,31 @@ def create_tfrecord(mode, writer):
             }))
             writer.write(example.SerializeToString())
     writer.close()
+    
 
+if __name__ == '__main__':
+    x = input('mode:')
+    if x == 'write':
+        writer_train = tf.io.TFRecordWriter('./RIDER Lung CT/tfrecord/train.tfr')
+        writer_val = tf.io.TFRecordWriter('./RIDER Lung CT/tfrecord/val.tfr')
 
-writer_train = tf.io.TFRecordWriter('./RIDER Lung CT/tfrecord/train.tfr')
-writer_val = tf.io.TFRecordWriter('./RIDER Lung CT/tfrecord/val.tfr')
+        create_tfrecord('train-data', writer_train)
+        create_tfrecord('val-data', writer_val)
+        print('done')
+    else:
+        o = pydicom.read_file('./RIDER Lung CT/val-data/7230-2/1-060.dcm').pixel_array
+        img = preprocessing('./RIDER Lung CT/val-data/7230-2/1-060.dcm')
 
-create_tfrecord('train-data', writer_train)
-create_tfrecord('val-data', writer_val)
-print('done')
+        fig = plt.figure()
 
-'''
-fig = plt.figure()
+        ax1 = fig.add_subplot(1, 2, 1)
+        ax1.imshow(o, cmap='gray')
+        ax1.set_title('original')
+        ax1.axis('off')
 
-ax1 = fig.add_subplot(1, 2, 1)
-ax1.imshow(o, cmap='gray')
-ax1.set_title('original')
-ax1.axis('off')
+        ax2 = fig.add_subplot(1, 2, 2)
+        ax2.imshow(img, cmap='gray')
+        ax2.set_title('processed')
+        ax2.axis('off')
 
-ax2 = fig.add_subplot(1, 2, 2)
-ax2.imshow(img, cmap='gray')
-ax2.set_title('processed')
-ax2.axis('off')
-
-plt.show()
-'''
+        plt.show()

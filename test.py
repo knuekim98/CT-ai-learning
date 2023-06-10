@@ -15,7 +15,7 @@ for val_data, val_gt in val_dataset:
     x_value = int(x[0]*224)
     y_value = int(y[0]*224)
 
-    c = Circle((x_value, y_value), radius=3, fill=True, color='red', zorder=5)
+    c = Circle((x_value, y_value), radius=2, fill=True, color='red', zorder=5)
     axe = plt.axes()
     axe.add_patch(c)
 
@@ -24,7 +24,7 @@ for val_data, val_gt in val_dataset:
     py = p[:,1]
     px_value = int(px[0]*224)
     py_value = int(py[0]*224)
-    c2 = Circle((px_value, py_value), radius=3, fill=True, color='blue')
+    c2 = Circle((px_value, py_value), radius=2, fill=True, color='blue')
     axe.add_patch(c2)
 
     plt.imshow(val_data[0], cmap='gray')
